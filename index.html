@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autonomous Drone Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -221,10 +222,130 @@
       color: var(--text-light);
       font-size: 0.9rem;
     }
+
+    .email-link {
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .email-link:hover {
+      color: var(--off-white);
+    }
+    
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal-content {
+      background-color: var(--graphite-gray);
+      padding: 2rem;
+      border-radius: 4px;
+      text-align: center;
+      position: relative;
+      width: 90%;
+      max-width: 400px;
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal.open .modal-content {
+      transform: translateY(0);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    
+    .modal-close:hover {
+      color: var(--off-white);
+    }
+    
+    .modal h3 {
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    
+    .modal p {
+      margin-bottom: 0;
+    }
+
+    /* Mobile Navigation */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 20px;
+      cursor: pointer;
+      z-index: 110;
+    }
+    
+    .hamburger span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background-color: var(--off-white);
+      transition: all 0.3s ease;
+    }
     
     @media (max-width: 768px) {
       .nav {
         padding: 1.5rem 2rem;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--dark-charcoal);
+        transition: right 0.3s ease;
+        gap: 2.5rem;
+      }
+      
+      .nav-links.active {
+        right: 0;
+      }
+      
+      .nav-links a {
+        font-size: 1.2rem;
       }
       
       .hero h1 {
@@ -243,25 +364,48 @@
       .social-links, .vertical-text {
         display: none;
       }
+
+      .hero-bg {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    /* Hamburger animation */
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
     }
   </style>
 </head>
 <body>
   <nav class="nav">
     <div class="logo">droneAI</div>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <div class="nav-links">
       <a href="#" class="active" id="home-link">Home</a>
       <a href="#technology" class="nav-link" id="technology-link">How it works</a>
       <a href="#future" class="nav-link" id="future-link">Future</a>
       <!--<a href="#">About Us</a>-->
-      <a href="#">Get in Touch</a>
+      <a href="#current-year" id="contact-link">Get in Touch</a>
     </div>
   </nav>
   
   <div class="social-links">
-    <a href="#">X</a>
+    <!--<a href="#">X</a>
     <a href="#">in</a>
-    <!--<a href="#">ig</a>-->
+    <a href="#">ig</a>-->
   </div>
   
   <div class="vertical-text">Intelligent Drone Technology</div>
@@ -346,12 +490,21 @@
   
   <footer>
     <p>© <span id="current-year"></span> Autonomous Drone Intelligence. All rights reserved.</p>
+    <a href="mailto:info@autonomousdroneintelligence.com" class="email-link">info@autonomousdroneintelligence.com</a>
   </footer>
+
+  <!-- Contact Modal -->
+  <div class="modal" id="contact-modal">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h3>Get in Touch</h3>
+      <p>info@autonomousdroneintelligence.com</p>
+    </div>
+  </div>
+  
   <script>
     document.getElementById('current-year').textContent = new Date().getFullYear();
-  </script>
-
-  <script>
+    
     // Smooth scroll for the scroll indicator
     document.getElementById('technology').addEventListener('click', function() {
       document.querySelector('#technology').scrollIntoView({
@@ -362,14 +515,40 @@
     // Smooth scroll for the navigation links
     document.querySelectorAll('.nav-links a').forEach(link => {
       link.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default anchor click behavior
-        const targetId = this.getAttribute('href');
-        if (targetId) {
-          document.querySelector(targetId).scrollIntoView({
-            behavior: 'smooth'
-          });
+        if (this.getAttribute('href') !== '#' || this.id === 'home-link') {
+          event.preventDefault(); // Prevent default anchor click behavior
+          
+          // If it's the contact link, open modal
+          if (this.id === 'contact-link') {
+            document.getElementById('contact-modal').classList.add('open');
+            return;
+          }
+          
+          // Close mobile menu if open
+          if (window.innerWidth <= 768) {
+            document.querySelector('.nav-links').classList.remove('active');
+            document.querySelector('.hamburger').classList.remove('active');
+          }
+          
+          const targetId = this.getAttribute('href');
+          if (targetId && targetId !== '#') {
+            document.querySelector(targetId).scrollIntoView({
+              behavior: 'smooth'
+            });
+          } else if (this.id === 'home-link') {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          }
         }
       });
+    });
+
+    // Mobile Navigation Toggle
+    document.querySelector('.hamburger').addEventListener('click', function() {
+      this.classList.toggle('active');
+      document.querySelector('.nav-links').classList.toggle('active');
     });
 
     // Update active link based on scroll position
@@ -392,6 +571,30 @@
         link.classList.remove('active');
         if (link.classList.contains('nav-link') && link.getAttribute('href') === `#${current}`) {
           link.classList.add('active');
+        } else if (pageYOffset < 100 && link.id === 'home-link') {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Close Modal
+    document.querySelector('.modal-close').addEventListener('click', function() {
+      document.getElementById('contact-modal').classList.remove('open');
+    });
+
+    // Close Modal when clicking outside content
+    document.getElementById('contact-modal').addEventListener('click', function(event) {
+      if (event.target === this) {
+        this.classList.remove('open');
+      }
+    });
+
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          document.querySelector('.nav-links').classList.remove('active');
+          document.querySelector('.hamburger').classList.remove('active');
         }
       });
     });
